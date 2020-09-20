@@ -10,7 +10,7 @@ LIBS=-lm -lstdc++
 _DEPS = leitordearquivos.hpp montador.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o leitordearquivos.o montador.o
+_OBJ = main.o leitordearquivos.o montador.o testes.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
