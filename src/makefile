@@ -7,7 +7,7 @@ LDIR =../lib
 
 LIBS=-lm -lstdc++
 
-_DEPS = leitordearquivos.hpp montador.hpp
+_DEPS = leitordearquivos.hpp montador.hpp testes.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 _OBJ = main.o leitordearquivos.o montador.o testes.o
@@ -17,7 +17,7 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 $(ODIR)/%.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-exec.out: $(OBJ)
+montador: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean

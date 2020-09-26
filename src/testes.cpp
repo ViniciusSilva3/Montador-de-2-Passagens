@@ -1,5 +1,5 @@
 #include "testes.hpp"
-
+#include "leitordearquivos.hpp"
 void testeMontador(montador mt) {
     printf("###################################\n");
     printf("Iniciando testes:\n");
@@ -43,4 +43,16 @@ void testeMontador(montador mt) {
     {
         printf("\033[1;31m Teste de verificacao da nao existencia na tabela de Instrucoes falhou! \033[0m\n");
     }
+
+    // teste de formatar as strings
+    string str;
+    str = formatString("aDd");
+    if(str == "ADD") {
+         printf("\033[1;32m Teste de verificacao da formatacao de string passou! \033[0m\n");
+    }
+    else
+    {
+        printf("\033[1;31m Teste de verificacao da formatacao de string falhou! \033[0m\n");
+    }
+
 }

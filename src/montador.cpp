@@ -73,8 +73,6 @@ int montador::insertNewSymbol(string str, int x) {
     pair<map<string,int>::iterator,bool> ret;
     ret = Tabela_de_Simbolos.insert(temp);
     if (ret.second==false) {
-        cout << "element 'z' already existed";
-        cout << " with a value of " << ret.first->second << '\n';
         return -1;
     }
     return 1;
