@@ -7,7 +7,7 @@ using namespace std;
 
 class montador {
     private:
-    map<string, int> Tabela_de_Instrucoes;
+    map<string, pair<int, int>> Tabela_de_Instrucoes;
     map<string, int> Tabela_de_Simbolos;
     map<string, int> Tabela_de_Diretivas;
     int PC; // program counter
@@ -17,7 +17,7 @@ class montador {
     montador(); // construtor
     ~montador(); // destrutor
     // metodos get
-    map<string, int> getTabela_de_Instrucoes();
+    map<string, pair<int, int>> getTabela_de_Instrucoes();
     map<string, int> getTabela_de_Simbolos();
     map<string, int> getTabela_de_Diretivas();
     int getPC();
@@ -29,7 +29,10 @@ class montador {
 
     // other methods
     int insertNewSymbol(string, int);
-    int checkIfInstruction(string);
+    pair<int, int> checkIfInstruction(string);
+    int PrimeiraPassagem();
+    int checkIfRotulo(string);
+    int checkIfDiretiva(string);
 };
 
 #endif // MONTADOR_HPP

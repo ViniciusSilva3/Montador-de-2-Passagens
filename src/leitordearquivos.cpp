@@ -15,14 +15,16 @@ vector<string> split (string str) {
     string item;
 	int flag1;
 	flag1 = 0;
-	regex reg("([a-zA-Z0-9+;]([^ ]+)?)");
+	regex reg("([a-zA-Z0-9+;]([^ \n\r\t]+)?)");
 	smatch matches;
+	
 	while(regex_search(str, matches, reg)) {
 		/* se a linha for um comentario */
-		if(matches.str(1)[0] == ';')
+		if(matches.str(1)[0] == ';') {
 			return result;
-		cout << matches.str(1) << endl;
-		result.push_back(matches.str(1));
+		}
+		if(matches.str(1).size() != 0)
+			result.push_back(matches.str(1));
 		str = matches.suffix().str(); //remove o primeiro match
 	}
     return result;
@@ -30,6 +32,7 @@ vector<string> split (string str) {
 
 int checkTokens(vector<string> tok, montador mt) {
 	int check;
+	pair<int, int> check2;
 	/* caso o primeiro elemento seja um simbolo */
 	if(tok[0].back() == ':') {
 		tok[0].pop_back();
@@ -40,8 +43,8 @@ int checkTokens(vector<string> tok, montador mt) {
 		}
 	}
 	else {
-		check = mt.checkIfInstruction(tok[0]);
-		if( check != 0) {
+		check2 = mt.checkIfInstruction(tok[0]);
+		if( check2.first != 0) {
 			/* eh uma instrucao valida, retorna o seu opcode, como aqui eh primeira
 			 * passagem, ainda nao faz nada
 			 */
@@ -78,16 +81,20 @@ map<string, string> checaEqu(vector<string> linha, map<string, string> mapParam)
 }
 
 vector<string> preProcess(string arquivo, montador mt) {
-	int linhaAtual = 0;
+	int linhaAtual = 0, flag;
 	string linha, linhaTextoSaida, linhaEmBranco;
 	vector<string> tokens, textoSaida, tokens2;
 	map<string, string> verificaEqu;
 	map<string,string>::iterator it;
 	// read file
 	ifstream MyFile(arquivo);
-	while(getline(MyFile, linha, '\r')) {
+	while(getline(MyFile, linha)) {
+		stringstream ss(linha);
+		// para verificar tanto '\r' qunato '\n', dependendo do SO o arquivo fica diferente
+		getline(ss, linha, '\r');
 		linhaAtual++;
 		linhaTextoSaida = "";
+		flag = 0;
 		if ( !tokens.empty() ) {
 			tokens.clear();
 		}
@@ -95,17 +102,19 @@ vector<string> preProcess(string arquivo, montador mt) {
 			tokens2.clear();
 		}
 		tokens = split(linha);
-		//cout << tokens.size() << endl;
+	
 		if(tokens.size() < 2) {
+			
 			/* verifica se tem 0 ou apenas uma palavra por linha
 			 * a unica instrucao que pode ter so 1 palavra eh "STOP"
 			 */
 			if(tokens.size() != 0) {
-				formatString(tokens[0]);
-				if( tokens[0].compare("STOP") != 0 ) {
+				tokens[0] = formatString(tokens[0]);
+				cout << tokens[0] << endl;
+				if( tokens[0].compare("STOP") != 0) {
 					/* ler ate encontrar a proxima linha que nao esta em branco ou eh comentario*/
 					while(1) {
-						getline(MyFile, linhaEmBranco, '\r');
+						getline(MyFile, linhaEmBranco);
 						tokens2 = split(linhaEmBranco);
 						if(tokens2.size() != 0) {
 							for(int k=0; k<tokens2.size(); k++)
@@ -114,10 +123,15 @@ vector<string> preProcess(string arquivo, montador mt) {
 						}
 					} // end while
 				}
+				else {
+					
+				}
 			}
 			else {
 				while(1) {
-						getline(MyFile, linhaEmBranco, '\r');
+						getline(MyFile, linhaEmBranco);
+						stringstream ss(linhaEmBranco);
+						getline(ss, linhaEmBranco, '\r');
 						tokens2 = split(linhaEmBranco);
 						if(tokens2.size() != 0) {
 							for(int k=0; k<tokens2.size(); k++)
@@ -133,6 +147,7 @@ vector<string> preProcess(string arquivo, montador mt) {
 			tokens[i] = formatString(tokens[i]);
 		}
 		verificaEqu = checaEqu(tokens, verificaEqu);
+		/* verifica a existencia de um label definido por um EQU na linha */
 		for(int j=0; j<tokens.size(); j++) {
 			if(j != 0) {
 				if( !verificaEqu.empty() ) {
@@ -143,12 +158,34 @@ vector<string> preProcess(string arquivo, montador mt) {
 						}
 				}
 			}
+			/* caso seja a definicao do EQU nao deve escrever a linha */
+			else {
+				if( !verificaEqu.empty() ) {
+					if(tokens[j].back() == ':')
+						tokens[j].pop_back();
+					it = verificaEqu.find(tokens[j]);
+						if (it != verificaEqu.end()) {
+							/* Econtrou um EQU e nao eh a deficinao dele */
+							flag = 1;
+						}
+				}
+			}
+			if(tokens[0].compare("IF")==0 && j != 0) {
+				flag = 1;
+				if(tokens[j].compare("0") == 0) {
+					getline(MyFile, linha, '\r');
+					break;
+				}
+			}
 			if(j != tokens.size()-1) 
 				linhaTextoSaida += tokens[j] + " ";
 			else
 				linhaTextoSaida += tokens[j];
 		}
-		textoSaida.push_back(linhaTextoSaida);
+		if(flag != 1 && linhaTextoSaida.size()!= 0) {
+			textoSaida.push_back(linhaTextoSaida);
+		}
+			
 	}
 	MyFile.close();
 	return textoSaida;
@@ -157,7 +194,7 @@ vector<string> preProcess(string arquivo, montador mt) {
 void escreveArquivo(vector<string> texto) {
 	ofstream TextoPreprocessado("preprocess.txt");
 	for(int i=0; i<texto.size(); i++) {
-		TextoPreprocessado << texto[i] << "\r";
+		TextoPreprocessado << texto[i] << "\n";
 	}
 	TextoPreprocessado.close();
 }

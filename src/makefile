@@ -7,10 +7,10 @@ LDIR =../lib
 
 LIBS=-lm -lstdc++
 
-_DEPS = leitordearquivos.hpp montador.hpp testes.hpp
+_DEPS = leitordearquivos.hpp montador.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o leitordearquivos.o montador.o testes.o
+_OBJ = main.o leitordearquivos.o montador.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
