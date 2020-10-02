@@ -110,7 +110,6 @@ vector<string> preProcess(string arquivo, montador mt) {
 			 */
 			if(tokens.size() != 0) {
 				tokens[0] = formatString(tokens[0]);
-				cout << tokens[0] << endl;
 				if( tokens[0].compare("STOP") != 0) {
 					/* ler ate encontrar a proxima linha que nao esta em branco ou eh comentario*/
 					while(1) {

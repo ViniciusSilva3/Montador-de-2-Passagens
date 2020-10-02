@@ -4,9 +4,11 @@ LOAD N
 FAT: 
 
   SUB ONE
-COPY N1         M2
+;COPY N1         M2
 JMPZ FIM
 STORE AUX ; e esse
+MULt N
+StoRe N
 LABEL:
   ;oi
   

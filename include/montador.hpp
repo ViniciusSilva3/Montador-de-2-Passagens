@@ -28,11 +28,14 @@ class montador {
     void setACC(int);
 
     // other methods
+    int getSymbol(string);
     int insertNewSymbol(string, int);
     pair<int, int> checkIfInstruction(string);
     int PrimeiraPassagem();
     int checkIfRotulo(string);
     int checkIfDiretiva(string);
+    void escreveArqFinal(vector<string>);
+    int SegundaPassagem(void);
 };
 
 #endif // MONTADOR_HPP
