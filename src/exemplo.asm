@@ -14,10 +14,10 @@ SECTION TEXT	;linha dos dados
 		OUTPUT	R
 		STOP
 SECTION DATA
-	B:		
-		SPACE
+	B:
+			SPACE
 	H:		
 		SPACE
 	R:		
 	SPACE 5 
-	DOIS:	CONST	
+	DOIS:	CONST	2

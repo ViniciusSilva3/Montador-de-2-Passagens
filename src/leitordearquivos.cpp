@@ -13,6 +13,7 @@ string formatString(string str) {
 vector<string> split (string str) {
     vector<string> result;
     string item;
+	string str1;
 	int flag1;
 	flag1 = 0;
 	regex reg("([a-zA-Z0-9+;]([^ \n\r\t]+)?)");
@@ -23,8 +24,23 @@ vector<string> split (string str) {
 		if(matches.str(1)[0] == ';') {
 			return result;
 		}
-		if(matches.str(1).size() != 0)
-			result.push_back(matches.str(1));
+		if(matches.str(1).size() != 0) {
+			// verifica se tem , separando elementos
+			size_t found = matches.str(1).find(',');
+			if (found!=string::npos) {
+				str1 = "";
+				for(int l=0; l<found; l++)
+					str1 += matches.str(1)[l];
+				result.push_back(str1);
+				str1 = "";
+				for(int l=found+1; l<matches.str(1).size(); l++)
+					str1 +=matches.str(1)[l];
+				result.push_back(str1);
+			}
+			else
+				result.push_back(matches.str(1));
+		}
+			
 		str = matches.suffix().str(); //remove o primeiro match
 	}
     return result;
@@ -145,6 +161,7 @@ vector<string> preProcess(string arquivo, montador mt) {
 		for(int i=0; i<tokens.size(); i++) {
 			tokens[i] = formatString(tokens[i]);
 		}
+		
 		verificaEqu = checaEqu(tokens, verificaEqu);
 		/* verifica a existencia de um label definido por um EQU na linha */
 		for(int j=0; j<tokens.size(); j++) {
@@ -160,14 +177,18 @@ vector<string> preProcess(string arquivo, montador mt) {
 			/* caso seja a definicao do EQU nao deve escrever a linha */
 			else {
 				if( !verificaEqu.empty() ) {
-					if(tokens[j].back() == ':')
+					if(tokens[j].back() == ':') {
 						tokens[j].pop_back();
-					it = verificaEqu.find(tokens[j]);
+						it = verificaEqu.find(tokens[j]);
 						if (it != verificaEqu.end()) {
 							/* Econtrou um EQU e nao eh a deficinao dele */
 							flag = 1;
 						}
+						else
+							tokens[j].push_back(':');
+					}
 				}
+					
 			}
 			if(tokens[0].compare("IF")==0 && j != 0) {
 				flag = 1;

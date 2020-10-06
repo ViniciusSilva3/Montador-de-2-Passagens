@@ -1,5 +1,6 @@
-COPY           ZERO,   OLDER
-COPY           ONE,    OLD
+section text
+COPY           ZERO, OLDER
+COPY           ONE, OLD
 INPUT          LIMIT
 OUTPUT         OLD
 FRONT:  LOAD           OLDER
@@ -13,6 +14,7 @@ COPY           NEW,    OLD
 JMP            FRONT
 FINAL:  OUTPUT         LIMIT
 STOP
+section data
 ZERO:   CONST          0
 ONE:    CONST          1
 OLDER:  SPACE

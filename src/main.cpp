@@ -25,7 +25,8 @@ int main(int argc, char* argv[]) {
 		return 0;
 	}
 	EscreveArquivoPreProcessado(argv[2], mont1);
-	mont1.PrimeiraPassagem();
+	if( mont1.PrimeiraPassagem() != 0 )
+		return 0;
 	mont1.SegundaPassagem();
 	//test("FAT:    SUB        ONE");
 	return 0;

@@ -124,6 +124,8 @@ int montador::checkIfRotulo(string str) {
 
 int montador::PrimeiraPassagem() {
     int contador_linha, contador_palavras, verificaRotulo, insereTabelaSimbolo, verificador2;
+    int statusText = 3; // esta na diretiva text
+    bool textfaltante = false;
     pair<int, int> verificador;
     contador_linha = 1;
     contador_palavras = 0;
@@ -135,13 +137,13 @@ int montador::PrimeiraPassagem() {
 			tokens.clear();
 		}
         tokens = split(linha);
-        
 
         verificaRotulo = checkIfRotulo(tokens[0]); // verifica se primeiro token da linha em um rotulo
         if(verificaRotulo==1) {
             insereTabelaSimbolo = insertNewSymbol(tokens[0], contador_palavras);
                 if( insereTabelaSimbolo == -1 ) {
-                    cout << "INSERCAO INVALIDA -> ERRO" << endl;
+                    cout << "ERRO redefinicao de Simbolo na linha " << contador_linha <<endl;
+                    return -1;
                 }
                 else {
                     verificador = checkIfInstruction(tokens[1]); // verifica elemento seguinte ao rotulo
@@ -150,15 +152,28 @@ int montador::PrimeiraPassagem() {
                         verificador2 = checkIfDiretiva(tokens[1]);
                         if( verificador2 == 0 ) {
                             /* Caso em que nao eh nem diretiva nem instrucao */
-                            cout << "ERRO -> NAO EH ROTULO NEM DIRETIVA" << endl;
+                            if(tokens[1].back() == ':') {
+                                cout << "ERRO -> Dois rotulos na mesma linha, na linha: " << contador_linha <<endl;
+                                return -1;
                             }
+                            cout << "ERRO -> Nao eh instrucao nem diretiva, na linha: "  << contador_linha << endl;
+                            return -1;
+                        }
                         else {
                             /* Caso em que eh uma diretiva */
+                            if( statusText != 0) {
+                                cout << "ERRO diretiva na secao errada, na linha: " << contador_linha<< endl;
+                                return -1;
+                            }
                             contador_palavras += verificador2;
                         }
                     }
                     else {
                         /* caso em que eh uma instrucao */
+                        if(tokens.size() > verificador.second+1) {
+                            cout << "ERRO: quantidade de operandos invalida, linha: "  << contador_linha << endl;
+                            return -1;
+                        }
                         contador_palavras += verificador.second;
                     }
                 }
@@ -171,27 +186,56 @@ int montador::PrimeiraPassagem() {
                         verificador2 = checkIfDiretiva(tokens[0]);
                         if( verificador2 == -1 ) {
                             /* Caso em que nao eh nem diretiva nem instrucao */
-                            cout << "ERRO -> NAO EH ROTULO NEM DIRETIVA" << endl;
+                            cout << "ERRO linha nao inicia com rotulo, instrucao ou diretiva, na linha: " << contador_linha << endl;
+                             return -1;
                             }
                         else {
                             /* Caso em que eh uma diretiva */
-                            contador_palavras += verificador2;
+                            if( (tokens[1].compare("TEXT")==0) or  (tokens[1].compare("DATA")==0) ) {
+                                if( (tokens[1].compare("TEXT")==0) ) {
+                                    if( textfaltante == false)
+                                         textfaltante = true;
+                                    else {
+                                        cout << "Erro: 2 secoes de TEXT, na linha: " << contador_linha << endl;
+                                        return -1;
+                                    }    
+                                }
+                                else
+                                    statusText = 0;
+                        
+                                contador_palavras += verificador2;  
+                            }
+                                
+                            else {
+                                cout << "Secao invalida na linha: " << contador_linha << endl;
+                                return -1;
+                            }
                         }
                     }
                     else {
                         /* caso em que eh uma instrucao */
+                         if(tokens.size() > verificador.second) {
+                            cout << "ERRO: quantidade de operandos invalida, linha: "  << contador_linha << endl;
+                            return -1;
+                        }
                         contador_palavras += verificador.second;
                     }
         }
+        contador_linha++;
     }
     // verificar valores
-    map<string, int> ts;
+    /*map<string, int> ts;
     ts = getTabela_de_Simbolos();
     for(auto it = ts.cbegin(); it != ts.cend(); ++it)
     {
         cout << it->first << " " << it->second << "\n";
     } 
-    MyFile.close();
+    MyFile.close(); */
+    if(textfaltante == false) {
+        cout << "ERRO Secao texto faltando" << endl;
+        return -1;
+    }
+        
     return 0;
 }
 
@@ -240,7 +284,7 @@ int montador::SegundaPassagem()
                     }
                     insereTabelaSimbolo = insertNewSymbol(tokens[j], contador_posicao);
                     if( insereTabelaSimbolo == 1) {
-                        cout << "ERRO NA LINHA: " << contador_linhas << ", Simbolo desconhecido " << tokens[j]<< endl;
+                        cout << "ERRO NA LINHA: " << contador_linhas << "Declaracao de Rotulo ausente: " << tokens[j]<< endl;
                         return 0;
                     }
                     else {
@@ -266,8 +310,13 @@ int montador::SegundaPassagem()
                 }
             }
             else {
-                cout << "ERRO, NAO EH DIRETIVA NEM INSTRUCAO" << endl;
-                return 0;
+                if(tokens[tokpos].back() == ':') {
+                    cout << "ERRO -> Dois rotulos na mesma linha, na linha: " << contador_linhas <<endl;
+                    return -1;
+                }
+                cout << "ERRO, NAO EH DIRETIVA NEM INSTRUCAO, na linha: "  << contador_linhas << endl;
+                
+                return -1;
             }
             contador_linhas++;
     }
