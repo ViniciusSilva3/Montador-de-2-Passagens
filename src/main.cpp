@@ -6,7 +6,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 	montador mont1;
-	string nomeArquivoFinal;
+	string nomeArquivoFinal, nomeArquivoPre;
 	if(argc != 3) {
 		printf("Parametros de entrada incorretos!\n");
 		return 0;
@@ -14,20 +14,26 @@ int main(int argc, char* argv[]) {
 	//testeMontador(mont1);
 	nomeArquivoFinal = argv[2];
 	nomeArquivoFinal = nomeArquivoFinal.substr(0, nomeArquivoFinal.find('.'));
+	nomeArquivoPre = nomeArquivoFinal + ".PRE" + ".txt";
+	nomeArquivoFinal += ".OBJ";
 	if(strcmp(argv[1], "-p") == 0) {
-		nomeArquivoFinal += ".PRE";
+		
+		mont1.flagPreProcess = 0;
 	}
 	else if(strcmp(argv[1], "-o") == 0){
-		nomeArquivoFinal += ".OBJ";
+		
+		mont1.flagPreProcess = 1;
 	}
 	else {
 		printf("Diretiva nao encontrada\n");
 		return 0;
 	}
+	mont1.NomeTextoFinal = nomeArquivoFinal + ".txt";
 	EscreveArquivoPreProcessado(argv[2], mont1);
 	if( mont1.PrimeiraPassagem() != 0 )
 		return 0;
 	mont1.SegundaPassagem();
-	//test("FAT:    SUB        ONE");
+	rename("preprocess.txt", nomeArquivoPre.c_str());
+	
 	return 0;
 }

@@ -9,14 +9,14 @@ STORE          NEW
 SUB            LIMIT
 JMPP           FINAL
 OUTPUT         NEW
-COPY           OLD,    OLDER
-COPY           NEW,    OLD
+COPY           OLD,OLDER
+COPY           NEW,OLD
 JMP            FRONT
 FINAL:  OUTPUT         LIMIT
 STOP
 section data
-ZERO:   CONST          0
-ONE:    CONST          1
+ZERO:   CONST          -11
+ONE:    CONST          -2
 OLDER:  SPACE
 OLD:    SPACE
 NEW:    SPACE

@@ -3,7 +3,7 @@ text
 INPUT      N1
 INPUT
       N2
-LOAD        N1 N2
+LOAD        N1
 ADD         N2
 STORE
        N3

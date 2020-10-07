@@ -16,7 +16,7 @@ vector<string> split (string str) {
 	string str1;
 	int flag1;
 	flag1 = 0;
-	regex reg("([a-zA-Z0-9+;]([^ \n\r\t]+)?)");
+	regex reg("([a-zA-Z0-9+;-]([^ \n\r\t]+)?)");
 	smatch matches;
 	
 	while(regex_search(str, matches, reg)) {
@@ -128,8 +128,7 @@ vector<string> preProcess(string arquivo, montador mt) {
 				tokens[0] = formatString(tokens[0]);
 				if( tokens[0].compare("STOP") != 0) {
 					/* ler ate encontrar a proxima linha que nao esta em branco ou eh comentario*/
-					while(1) {
-						getline(MyFile, linhaEmBranco);
+					while(getline(MyFile, linhaEmBranco)) {
 						tokens2 = split(linhaEmBranco);
 						if(tokens2.size() != 0) {
 							for(int k=0; k<tokens2.size(); k++)
@@ -143,8 +142,7 @@ vector<string> preProcess(string arquivo, montador mt) {
 				}
 			}
 			else {
-				while(1) {
-						getline(MyFile, linhaEmBranco);
+				while(getline(MyFile, linhaEmBranco)) {
 						stringstream ss(linhaEmBranco);
 						getline(ss, linhaEmBranco, '\r');
 						tokens2 = split(linhaEmBranco);
@@ -205,7 +203,6 @@ vector<string> preProcess(string arquivo, montador mt) {
 		if(flag != 1 && linhaTextoSaida.size()!= 0) {
 			textoSaida.push_back(linhaTextoSaida);
 		}
-			
 	}
 	MyFile.close();
 	return textoSaida;

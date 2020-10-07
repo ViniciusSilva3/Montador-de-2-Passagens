@@ -14,6 +14,8 @@ class montador {
     int ACC; // acumulador
 
     public:
+    string NomeTextoFinal;
+    int flagPreProcess;
     montador(); // construtor
     ~montador(); // destrutor
     // metodos get
@@ -36,6 +38,8 @@ class montador {
     int checkIfDiretiva(string);
     void escreveArqFinal(vector<string>);
     int SegundaPassagem(void);
+    bool isNumber(const string&);
+    void verificaOperandosInvalidos(vector<string>);
 };
 
 #endif // MONTADOR_HPP
